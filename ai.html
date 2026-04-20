@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Game for GRE Prep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+        }
+
+        .navbar {
+            background: rgba(102, 126, 234, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar li {
+            margin: 0;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-bottom: 2px solid white;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .game-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .character-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .character-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .level-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-item {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .experience-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .experience-fill {
+            background: #4ade80;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .question-panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .word-display {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .word {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .definition-prompt {
+            color: #666;
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-button {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            text-align: left;
+            transition: all 0.3s ease;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .option-button:hover:not(:disabled) {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .option-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .option-button.correct {
+            background: #4ade80;
+            border-color: #22c55e;
+            color: white;
+        }
+
+        .option-button.incorrect {
+            background: #ef4444;
+            border-color: #dc2626;
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #22c55e;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .game-over {
+            text-align: center;
+            display: none;
+        }
+
+        .game-over.show {
+            display: block;
+        }
+
+        .game-over h2 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .final-stats {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+
+        .final-stats p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .home-button {
+            margin-top: 20px;
+        }
+
+        .level-up-animation {
+            animation: levelUp 0.6s ease;
+        }
+
+        @keyframes levelUp {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .disclaimer {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-top: 20px;
+            font-size: 0.85em;
+            color: #78350f;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .game-section {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .navbar ul {
+                gap: 10px;
+            }
+
+            .navbar a {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="post.html">Sample Post</a></li>
+            <li><a href="fromScratch.html">From Scratch</a></li>
+            <li><a href="ai.html" class="active">AI Project</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="main-content">
+        <div class="container">
+        <div class="header">
+            <h1>Study Game for GRE Prep</h1>
+            <p class="subtitle">Level up your knowledge!</p>
+            <div class="mode-selector">
+                <button class="mode-btn active" id="vocabMode" onclick="setMode('vocab')">Vocabulary</button>
+                <button class="mode-btn" id="mathMode" onclick="setMode('math')">Math</button>
+            </div>
+        </div>
+
+        <div class="game-section">
+            <div class="character-panel">
+                <div class="character-name" id="characterName">Scholar</div>
+                <div>Level</div>
+                <div class="level-display" id="levelDisplay">1</div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Experience Points</span>
+                        <div id="experienceValue">0 / 100</div>
+                    </div>
+                    <div class="experience-bar">
+                        <div class="experience-fill" id="experienceFill" style="width: 0%">
+                            <span id="expPercentage">0%</span>
+                        </div>
+                    </div>
+                    <div class="stat-item" style="margin-top: 15px;">
+                        <span class="stat-label">Questions Answered</span>
+                        <div id="answeredCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Correct Answers</span>
+                        <div id="correctCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-panel">
+                <div id="gameContent">
+                    <div class="word-display">
+                        <div class="word" id="wordDisplay">Loading...</div>
+                        <div class="definition-prompt">Find the correct definition:</div>
+                    </div>
+                    <div class="question-text" id="questionText">Loading question...</div>
+                    <div class="options" id="optionsContainer"></div>
+                    <div class="feedback" id="feedback"></div>
+                </div>
+
+                <div id="gameOverScreen" class="game-over">
+                    <h2>🎉 Quiz Complete! 🎉</h2>
+                    <div class="final-stats">
+                        <p>Final Level: <strong id="finalLevel">1</strong></p>
+                        <p>Total Experience: <strong id="finalExperience">0</strong></p>
+                        <p>Questions Answered: <strong id="finalAnswered">0</strong></p>
+                        <p>Accuracy: <strong id="finalAccuracy">0%</strong></p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="nextButton" style="display:none;">Next Question</button>
+                    <button class="btn btn-secondary" id="restartButton" style="display:none;">Play Again</button>
+                    <a href="index.html" class="btn btn-secondary home-button">Back to Home</a>
+                </div>
+            </div>
+        </div>
+        <div class="disclaimer">
+            GRE® is a registered trademark of Educational Testing Service (ETS). This product is not affiliated with, endorsed by, or approved by ETS.
+        </div>
+        </div>
+    </div>
+
+    <script>
+        // Secure escaping function to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Game mode state
+        let currentMode = 'vocab';
+
+        // Set game mode
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('vocabMode').classList.toggle('active', mode === 'vocab');
+            document.getElementById('mathMode').classList.toggle('active', mode === 'math');
+            initializeGame();
+        }
+
+        // GRE vocabulary data with appropriate, clean words
+        const vocabularyData = [
+            {
+                word: "Pellucid",
+                definitions: [
+                    { text: "Transparently clear in style or meaning; easily understood", correct: true },
+                    { text: "Having a thick or murky appearance", correct: false },
+                    { text: "To break or shatter into pieces", correct: false },
+                    { text: "A musical instrument of ancient origin", correct: false }
+                ]
+            },
+            {
+                word: "Ephemeral",
+                definitions: [
+                    { text: "Lasting for an indefinitely long time", correct: false },
+                    { text: "Lasting for a very short time", correct: true },
+                    { text: "A disease that affects many people", correct: false },
+                    { text: "Relating to the physical body", correct: false }
+                ]
+            },
+            {
+                word: "Obfuscate",
+                definitions: [
+                    { text: "To make unclear or unintelligible", correct: true },
+                    { text: "To explain in simple terms", correct: false },
+                    { text: "To apply a protective coating", correct: false },
+                    { text: "To arrange in order", correct: false }
+                ]
+            },
+            {
+                word: "Recalcitrant",
+                definitions: [
+                    { text: "Unwilling to obey; stubbornly resistant", correct: true },
+                    { text: "To calculate again or recount", correct: false },
+                    { text: "Easily influenced or persuaded", correct: false },
+                    { text: "A type of chemical element", correct: false }
+                ]
+            },
+            {
+                word: "Salient",
+                definitions: [
+                    { text: "Most noticeable or important", correct: true },
+                    { text: "Something salty or briny", correct: false },
+                    { text: "A type of military formation", correct: false },
+                    { text: "To jump or leap from place to place", correct: false }
+                ]
+            },
+            {
+                word: "Ameliorate",
+                definitions: [
+                    { text: "To make something better or improve", correct: true },
+                    { text: "To worsen or make worse", correct: false },
+                    { text: "A substance that kills harmful bacteria", correct: false },
+                    { text: "To combine or blend together", correct: false }
+                ]
+            },
+            {
+                word: "Cacophony",
+                definitions: [
+                    { text: "A harsh mixture of discordant sounds", correct: true },
+                    { text: "A pleasant and harmonious blending of sounds", correct: false },
+                    { text: "A type of musical performance", correct: false },
+                    { text: "An awkward social situation", correct: false }
+                ]
+            },
+            {
+                word: "Perspicacious",
+                definitions: [
+                    { text: "Having keen insight or understanding", correct: true },
+                    { text: "Lacking common sense or judgment", correct: false },
+                    { text: "Relating to physical appearance", correct: false },
+                    { text: "To lose consciousness briefly", correct: false }
+                ]
+            },
+            {
+                word: "Querulous",
+                definitions: [
+                    { text: "Habitually complaining; whining", correct: true },
+                    { text: "Asking many questions out of curiosity", correct: false },
+                    { text: "Peaceful and calm in nature", correct: false },
+                    { text: "Very quick or rapid in movement", correct: false }
+                ]
+            },
+            {
+                word: "Benevolent",
+                definitions: [
+                    { text: "Showing kindness and generous concern for others", correct: true },
+                    { text: "Acting out of self-interest or greed", correct: false },
+                    { text: "Harmful or destructive to people", correct: false },
+                    { text: "Reluctant to spend money", correct: false }
+                ]
+            }
+        ];
+
+        // GRE Math questions
+        const mathData = [
+            {
+                problem: "If 3x + 5 = 20, what is the value of x?",
+                options: [
+                    { text: "x = 3", correct: false },
+                    { text: "x = 5", correct: true },
+                    { text: "x = 7", correct: false },
+                    { text: "x = 10", correct: false }
+                ]
+            },
+            {
+                problem: "What is 25% of 80?",
+                options: [
+                    { text: "16", correct: false },
+                    { text: "25", correct: true },
+                    { text: "20", correct: false },
+                    { text: "30", correct: false }
+                ]
+            },
+            {
+                problem: "If a square has a side length of 6, what is its area?",
+                options: [
+                    { text: "12", correct: false },
+                    { text: "24", correct: false },
+                    { text: "36", correct: true },
+                    { text: "48", correct: false }
+                ]
+            },
+            {
+                problem: "What is the average of 12, 18, and 21?",
+                options: [
+                    { text: "17", correct: true },
+                    { text: "18", correct: false },
+                    { text: "19", correct: false },
+                    { text: "20", correct: false }
+                ]
+            },
+            {
+                problem: "If 2y - 3 = 7, what is the value of y?",
+                options: [
+                    { text: "y = 4", correct: false },
+                    { text: "y = 5", correct: true },
+                    { text: "y = 6", correct: false },
+                    { text: "y = 7", correct: false }
+                ]
+            },
+            {
+                problem: "What is 15% of 200?",
+                options: [
+                    { text: "25", correct: false },
+                    { text: "30", correct: true },
+                    { text: "35", correct: false },
+                    { text: "40", correct: false }
+                ]
+            },
+            {
+                problem: "If a triangle has a base of 10 and height of 8, what is its area?",
+                options: [
+                    { text: "40", correct: true },
+                    { text: "45", correct: false },
+                    { text: "50", correct: false },
+                    { text: "80", correct: false }
+                ]
+            },
+            {
+                problem: "What is the value of 3^4?",
+                options: [
+                    { text: "12", correct: false },
+                    { text: "64", correct: false },
+                    { text: "81", correct: true },
+                    { text: "27", correct: false }
+                ]
+            },
+            {
+                problem: "If the circumference of a circle is 12π, what is its radius?",
+                options: [
+                    { text: "2", correct: false },
+                    { text: "4", correct: false },
+                    { text: "6", correct: true },
+                    { text: "8", correct: false }
+                ]
+            },
+            {
+                problem: "What is 40% of 150?",
+                options: [
+                    { text: "50", correct: false },
+                    { text: "60", correct: true },
+                    { text: "70", correct: false },
+                    { text: "80", correct: false }
+                ]
+            }
+        ];
+
+        // Game state
+        const gameState = {
+            level: 1,
+            experience: 0,
+            experiencePerLevel: 100,
+            answered: 0,
+            correct: 0,
+            currentQuestionIndex: 0,
+            currentQuestion: null,
+            isAnswered: false
+        };
+
+        // Initialize the game
+        function initializeGame() {
+            gameState.level = 1;
+            gameState.experience = 0;
+            gameState.answered = 0;
+            gameState.correct = 0;
+            gameState.currentQuestionIndex = 0;
+            gameState.isAnswered = false;
+
+            // Shuffle appropriate data based on mode
+            shuffleArray(vocabularyData);
+            shuffleArray(mathData);
+
+            updateDisplay();
+            loadQuestion();
+
+            document.getElementById('nextButton').style.display = 'none';
+            document.getElementById('restartButton').style.display = 'none';
+            document.getElementById('gameOverScreen').classList.remove('show');
+            document.getElementById('gameContent').style.display = 'block';
+        }
+
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Load current question
+        function loadQuestion() {
+            const currentData = currentMode === 'vocab' ? vocabularyData : mathData;
+            
+            if (gameState.currentQuestionIndex >= currentData.length) {
+                endGame();
+                return;
+            }
+
+            gameState.isAnswered = false;
+            gameState.currentQuestion = currentData[gameState.currentQuestionIndex];
+
+            if (currentMode === 'vocab') {
+                // Shuffle answer options for vocab
+                const shuffledDefinitions = [...gameState.currentQuestion.definitions];
+                shuffleArray(shuffledDefinitions);
+
+                // Display word
+                document.getElementById('wordDisplay').textContent = escapeHtml(gameState.currentQuestion.word);
+
+                // Display question
+                document.getElementById('questionText').textContent = 'Select the correct definition:';
+
+                // Render answer options
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+
+                shuffledDefinitions.forEach((definition, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-button';
+                    button.textContent = escapeHtml(definition.text);
+                    button.disabled = false;
+                    button.dataset.correct = definition.correct;
+                    button.dataset.index = index;
+
+                    button.addEventListener('click', () => handleAnswer(button, definition.correct));
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                // Math mode
+                const shuffledOptions = [...gameState.currentQuestion.options];
+                shuffleArray(shuffledOptions);
+
+                // Display problem
+                document.getElementById('wordDisplay').textContent = escapeHtml(gameState.currentQuestion.problem);
+
+                // Display question
+                document.getElementById('questionText').textContent = 'Solve the problem:';
+
+                // Render answer options
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option-button';
+                    button.textContent = escapeHtml(option.text);
+                    button.disabled = false;
+                    button.dataset.correct = option.correct;
+                    button.dataset.index = index;
+
+                    button.addEventListener('click', () => handleAnswer(button, option.correct));
+                    optionsContainer.appendChild(button);
+                });
+            }
+
+            // Clear feedback
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('show', 'correct', 'incorrect');
+            feedback.textContent = '';
+
+            document.getElementById('nextButton').style.display = 'none';
+        }
+
+        // Handle answer selection
+        function handleAnswer(button, isCorrect) {
+            if (gameState.isAnswered) return;
+
+            gameState.isAnswered = true;
+            gameState.answered++;
+
+            // Disable all buttons
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.disabled = true;
+            });
+
+            // Show correct/incorrect state
+            const allButtons = document.querySelectorAll('.option-button');
+            allButtons.forEach(btn => {
+                if (btn.dataset.correct === 'true') {
+                    btn.classList.add('correct');
+                } else if (btn === button && btn.dataset.correct !== 'true') {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('show');
+
+            if (isCorrect) {
+                gameState.correct++;
+                gameState.experience += 25;
+                feedback.classList.add('correct');
+                feedback.textContent = '✓ Correct! Great job!';
+
+                // Check for level up
+                checkLevelUp();
+            } else {
+                gameState.experience += 10;
+                feedback.classList.add('incorrect');
+                feedback.textContent = '✗ Incorrect. Better luck next time!';
+            }
+
+            updateDisplay();
+            document.getElementById('nextButton').style.display = 'inline-block';
+        }
+
+        // Check if player leveled up
+        function checkLevelUp() {
+            while (gameState.experience >= gameState.experiencePerLevel) {
+                gameState.level++;
+                gameState.experience -= gameState.experiencePerLevel;
+                showLevelUpAnimation();
+                gameState.experiencePerLevel += 50;
+            }
+        }
+
+        // Show level up animation
+        function showLevelUpAnimation() {
+            const levelDisplay = document.getElementById('levelDisplay');
+            levelDisplay.classList.remove('level-up-animation');
+            // Trigger reflow to restart animation
+            void levelDisplay.offsetWidth;
+            levelDisplay.classList.add('level-up-animation');
+        }
+
+        // Update UI display
+        function updateDisplay() {
+            document.getElementById('levelDisplay').textContent = gameState.level;
+            document.getElementById('answeredCount').textContent = gameState.answered;
+            document.getElementById('correctCount').textContent = gameState.correct;
+
+            const expPercentage = Math.min((gameState.experience / gameState.experiencePerLevel) * 100, 100);
+            document.getElementById('experienceFill').style.width = expPercentage + '%';
+            document.getElementById('expPercentage').textContent = Math.round(expPercentage) + '%';
+            document.getElementById('experienceValue').textContent = gameState.experience + ' / ' + gameState.experiencePerLevel;
+        }
+
+        // Next question handler
+        document.getElementById('nextButton').addEventListener('click', () => {
+            gameState.currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        // Restart game handler
+        document.getElementById('restartButton').addEventListener('click', initializeGame);
+
+        // End game
+        function endGame() {
+            document.getElementById('gameContent').style.display = 'none';
+            document.getElementById('gameOverScreen').classList.add('show');
+
+            const accuracy = gameState.answered > 0
+                ? Math.round((gameState.correct / gameState.answered) * 100)
+                : 0;
+
+            document.getElementById('finalLevel').textContent = gameState.level;
+            document.getElementById('finalExperience').textContent = gameState.experience;
+            document.getElementById('finalAnswered').textContent = gameState.answered;
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+
+            document.getElementById('nextButton').style.display = 'none';
+            document.getElementById('restartButton').style.display = 'inline-block';
+        }
+
+        // Start the game when page loads
+        window.addEventListener('DOMContentLoaded', initializeGame);
+    </script>
+</body>
+</html>
