@@ -24,8 +24,8 @@ ul, ol {
     margin-right: auto;
 }
 .footer{
-    background-color: lightblue;
-    color: black;
+    background-color: lightslategray;
+    color: whitesmoke;
     height: 25px;
     line-height: 25px;
     position: fixed;
