@@ -43,6 +43,13 @@ ul, ol {
     text-align: center;
 }
 
+div{
+    text-align: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 nav{
     background-color: lightslategrey;
     padding: 10px;
